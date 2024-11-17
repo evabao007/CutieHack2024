@@ -16,8 +16,9 @@ function calculateResult() {
     try {
         let expression = currentInput;
 
+        console.log("Original Input: ", expression);
+
         // Handle complex operations like sin, cos, etc.
-        expression = expression.replace(/ln/g, 'Math.log');   // Replace ln with Math.log
         expression = expression.replace(/log/g, 'Math.log10'); // Replace log with Math.log10
         expression = expression.replace(/sin/g, 'Math.sin');   // Replace sin with Math.sin
         expression = expression.replace(/cos/g, 'Math.cos');   // Replace cos with Math.cos
@@ -25,7 +26,15 @@ function calculateResult() {
         expression = expression.replace(/sec/g, '1/Math.cos'); // Replace sec with 1/Math.cos
         expression = expression.replace(/csc/g, '1/Math.sin'); // Replace csc with 1/Math.sin
         expression = expression.replace(/cot/g, '1/Math.tan'); // Replace cot with 1/Math.tan
+
 	expression = expression.replace(/(\d+)\^(\d+)/g, 'Math.pow($1, $2)');
+
+        expression = expression.replace(/(\d+(\.\d*)?)\^(\d+(\.\d*)?)/g, 'Math.pow($1, $3)');
+
+	expression = expression.replace(/\bln\(([^)]+)\)/g, 'Math.log($1)'); // Handle ln(x) -> Math.log(x)
+
+	console.log('Transformed Expression:', expression);
+
 
         // Use eval to calculate the result of the expression
         result = eval(expression);
@@ -35,6 +44,7 @@ function calculateResult() {
         display.innerText = result;
         currentInput = result.toString();  // Store the result for further calculations
     } catch (error) {
+	console.error('Error evaluating expression:', error); // Log error for debugging
         display.innerText = 'Error';
         currentInput = '';
     }
@@ -54,3 +64,4 @@ function clearHistory() {
     const historyList = document.getElementById('historyList');
     historyList.innerHTML = ''; // Clear all history items
 }
+
